@@ -4,11 +4,14 @@ use anyhow::{anyhow, Result};
 use futures::future::try_join_all;
 use rust_translate::translate;
 
+use crate::operations::Srt;
+
 const DOUBLE_NEWLINE: &str = "\n\n";
 const NEWLINE: &str = "\n";
 
-async fn translated_srt(source_language: &str, srt: &str) -> Result<String> {
+pub async fn translated_srt(target_language: &str, srt: &Srt) -> Result<String> {
     let sections = srt
+        .content
         .split(DOUBLE_NEWLINE)
         .into_iter()
         .map(|x| x.lines().collect::<Vec<_>>())
@@ -21,9 +24,10 @@ async fn translated_srt(source_language: &str, srt: &str) -> Result<String> {
         .collect::<Vec<_>>();
 
     let translated_words = words.into_iter().map(|x| {
-        let source_language = source_language.to_owned();
+        let target_language = target_language.to_owned();
+        let source_language = srt.language.to_owned();
         tokio::spawn(async move {
-            translate(&x, &source_language, "zh")
+            translate(&x, &source_language, &target_language)
                 .await
                 .map_err(|_| anyhow!(""))
         })

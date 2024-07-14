@@ -5,17 +5,18 @@ use std::{
     process::Command,
 };
 
-struct Track {
+#[derive(Debug)]
+pub struct Track {
     id: usize,
-    language: String,
+    pub language: String,
 }
 
-struct Srt {
-    language: String,
-    content: String,
+pub struct Srt {
+    pub language: String,
+    pub content: String,
 }
 
-fn tracks(mkv_path: &Path) -> Result<Vec<Track>> {
+pub fn tracks(mkv_path: &Path) -> Result<Vec<Track>> {
     let stdout = Command::new("mkvinfo")
         .arg(mkv_path.to_str().context("invalid path")?)
         .output()?
@@ -62,7 +63,7 @@ fn tracks(mkv_path: &Path) -> Result<Vec<Track>> {
     Ok(tracks)
 }
 
-fn extract_srt(mkv: &Path, track: Track) -> Result<Srt> {
+pub fn extract_srt(mkv: &PathBuf, track: &Track) -> Result<Srt> {
     let mut srt_path = PathBuf::new();
     srt_path.push(mkv.parent().context("invalid mkv parent")?);
     let srt_file_name = format!(
@@ -85,6 +86,6 @@ fn extract_srt(mkv: &Path, track: Track) -> Result<Srt> {
 
     Ok(Srt {
         content,
-        language: track.language,
+        language: track.language.clone(),
     })
 }

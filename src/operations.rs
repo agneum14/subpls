@@ -47,14 +47,20 @@ pub fn tracks(mkv_path: &Path) -> Result<Vec<Track>> {
                 .unwrap()
                 - 1;
 
-            let language = x
+            let language = if x
                 .iter()
-                .filter(|x| x.starts_with("|  + Language (IETF BCP 47):"))
-                .last()
-                .unwrap()
-                .split_whitespace()
-                .collect::<Vec<_>>()[6]
-                .to_owned();
+                .any(|y| y.starts_with("|  + Language (IETF BCP 47):"))
+            {
+                x.iter()
+                    .filter(|x| x.starts_with("|  + Language (IETF BCP 47):"))
+                    .last()
+                    .unwrap()
+                    .split_whitespace()
+                    .collect::<Vec<_>>()[6]
+                    .to_owned()
+            } else {
+                "en".to_owned()
+            };
 
             Track { id, language }
         })

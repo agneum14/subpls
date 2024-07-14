@@ -50,7 +50,7 @@ async fn main() {
         .flat_map(|x| file_paths(x))
         .filter(|x| x.file_name().unwrap().to_str().unwrap().ends_with(".mkv"))
         .collect::<Vec<_>>();
-
+    
     for mkv_path in mkv_paths.iter() {
         let tracks = tracks(mkv_path).unwrap();
         let track = match tracks.iter().filter(|x| x.language == "en").last() {
@@ -61,19 +61,19 @@ async fn main() {
                 .last(),
         };
         let track = track.unwrap();
-
+    
         let original_srt = extract_srt(mkv_path, track).unwrap();
         let srt = translated_srt(&target_language, &original_srt)
             .await
             .unwrap();
-
+           
         let srt_path = mkv_path.to_str().unwrap().to_owned();
         let srt_path = srt_path
             .chars()
             .take(srt_path.len() - 4)
             .chain(format!(".{}.srt", &target_language).chars())
             .collect::<String>();
-
+           
         let mut srt_file = File::create(srt_path).unwrap();
         srt_file.write_all(srt.as_bytes()).unwrap();
     }

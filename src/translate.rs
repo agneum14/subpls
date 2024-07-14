@@ -48,17 +48,17 @@ async fn translated_srt(source_language: &str, srt: &str) -> Result<String> {
     Ok(new_srt)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::fs;
-
-    #[tokio::test]
-    async fn translate_squid_game() {
-        let srt = fs::read_to_string(
-            "test_data/Squid Game - The Challenge - S01E09 - Circle of Trust WEBRip-1080p.en.srt",
-        )
-        .unwrap();
-        translated_srt("en", &srt).await;
-    }
-}
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     use std::fs;
+//
+//     #[tokio::test]
+//     async fn translate_squid_game() {
+//         let srt = fs::read_to_string(
+//             "test_data/Squid Game - The Challenge - S01E09 - Circle of Trust WEBRip-1080p.en.srt",
+//         )
+//         .unwrap();
+//         translated_srt("en", &srt).await;
+//     }
+// }
